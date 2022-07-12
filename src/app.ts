@@ -1,8 +1,10 @@
 import "reflect-metadata";
 import express, { response } from 'express';
-import { DataSource } from "typeorm";
+import { DataSource, LessThan } from "typeorm";
 import { User } from "./entities/user";
 import { Profile } from "./entities/profile";
+import { Company } from "./entities/company";
+import { Product } from "./entities/product";
 
 const app = express();
 app.use(express.json());
@@ -30,9 +32,11 @@ app.listen(port, ()=>{
     console.log(`This app is running on the port ${port}`);
 });
 
-app.get('/', async (req,res)=>{
-    const userRepo =  AppDataSource.getRepository(User);
-    const profileRepo =  AppDataSource.getRepository(Profile);
+/* ================================ Implementing one to one relation ================================ */
+
+// app.get('/', async (req,res)=>{
+//     const userRepo =  AppDataSource.getRepository(User);
+//     const profileRepo =  AppDataSource.getRepository(Profile);
    
     //==================================get all the user records=======================================//
 
@@ -88,4 +92,85 @@ app.get('/', async (req,res)=>{
     //      email:"minhaj.iqbal@gmail.com"});
          
     //      return res.send("User record updated");
+//});
+
+/* ==========================>>>>>>>>>> IMPLEMENTING MANY TO ONE AND ONE TO MANY RELATION <<<<<<<<<<<============================*/
+
+
+   //inserting the data
+
+//app.get('/', async function (req, res){
+
+    // const companyRepo = AppDataSource.getRepository(Company);
+
+    // let products : Product[] = [];
+
+    // let samsung = new Product();
+    // samsung.name = "Galaxy Note";
+    // samsung.description = "A smart Phone with Spen",
+    // samsung.price = 120000;
+
+    // let gear = new Product();
+    // gear.name = "Galaxy Watch";
+    // gear.description = "Smart Watch",
+    // gear.price = 30000;
+
+    // let SmartTV = new Product();
+    // SmartTV.name = "Oled Crystal";
+    // SmartTV.description = "Premium android smart Tv",
+    // SmartTV.price = 90000;
+    
+    // products.push(samsung, gear, SmartTV);
+
+    // let company: Company = new Company();
+    // company.name= "Samsung",
+    // company.description="Multipurpose product based company",
+    // company.products = products;
+
+    // const dataInserted = await companyRepo.save(company);
+    // res.json(dataInserted);
+
+//});
+
+//=======================================>>>> getting the data & filtering as well<<<<<<=========================================//
+
+app.get('/', async (req, res) => {
+    
+    const companyRepo = AppDataSource.getRepository(Company);
+    const companyFound = await companyRepo.find({
+        // relations:{
+        //     products: true
+        // },
+        // where:{
+        //     products:{
+        //         price: LessThan(50000),
+        //     }
+        // }
+    });
+
+    res.json(companyFound);
 });
+
+//===========================================>>>> Updating the data <<<<<<=========================================//
+
+// app.get('/', async function (req, res){
+
+//      const companyRepo = AppDataSource.getRepository(Company);
+//      const company = await companyRepo.findOne({where: {id: 1}});
+//      if(company != undefined){
+       
+//         company.name = "Apple LTD"; 
+       
+//        const dataUpdated = await companyRepo.save(company);
+//        res.json(dataUpdated);
+//     }
+//      else res.send('This company does not exist');
+// });
+
+//===========================================>>>> Deleting the data <<<<<<=========================================//
+
+// app.get('/',async (req, res) => {
+//   const companyRepo = AppDataSource.getRepository(Company);
+//   await companyRepo.delete(1); 
+//   res.send("Data Deleted"); 
+// });
